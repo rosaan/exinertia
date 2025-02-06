@@ -144,19 +144,19 @@ if Code.ensure_loaded?(Igniter) do
 
       igniter
       |> Igniter.Project.Config.configure(
-        "config/config.exs",
+        "config.exs",
         :routes,
         [:router],
         {:code, Sourceror.parse_string!(inspect(router_module))}
       )
       |> Igniter.Project.Config.configure(
-        "config/config.exs",
+        "config.exs",
         :routes,
         [:typescript],
         {:code, Sourceror.parse_string!("true")}
       )
       |> Igniter.Project.Config.configure(
-        "config/config.exs",
+        "config.exs",
         :routes,
         [:routes_path],
         {:code, Sourceror.parse_string!("\"assets/js/routes\"")}

@@ -164,27 +164,30 @@ if Code.ensure_loaded?(Igniter) do
     end
 
     defp add_live_reloading(igniter) do
-      application_module = Igniter.Project.Module.module_name(igniter, "Application")
+      app_module = Igniter.Project.Application.app_module(igniter)
 
       igniter
       |> Igniter.Project.Module.find_and_update_module!(
-        application_module,
+        app_module,
         fn zipper ->
           with {:ok, zipper} <- Igniter.Code.Function.move_to_def(zipper, :start, 2),
                {:ok, zipper} <-
-                 Igniter.Code.Common.move_to_pattern(zipper, "children = [__cursor__()]") do
-            Igniter.Code.Common.add_code(
-              zipper,
-              """
+                 Igniter.Code.Common.move_to_pattern(zipper, {:=, _, [{:children, _, _}, _]}),
+               {:ok, zipper} <-
+                 Igniter.Code.Common.move_to_pattern(zipper, {:=, _, [{:opts, _, _}, _]}) do
+            {:ok,
+             Igniter.Code.Common.add_code(
+               zipper,
+               """
 
-              children = if Mix.env() == :dev do
-                children ++ [{Routes.Watcher, []}]
-              else
-                children
-              end
-              """,
-              placement: :after
-            )
+               children = if Mix.env() == :dev do
+                 children ++ [{Routes.Watcher, []}]
+               else
+                 children
+               end
+               """,
+               placement: :before
+             )}
           else
             _ -> {:ok, zipper}
           end

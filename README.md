@@ -16,7 +16,7 @@ end
 
 ## Quick Start
 
-ExInertia provides two main mix tasks to get you up and running:
+ExInertia provides three main mix tasks to get you up and running:
 
 1. Install ExInertia and configure your project:
 ```bash
@@ -32,6 +32,11 @@ mix bun.install
 3. Scaffold the Inertia frontend:
 ```bash
 mix exinertia.setup
+```
+
+4. Configure routes (optional):
+```bash
+mix exinertia.setup.routes
 ```
 
 ### What does `exinertia.install` do?
@@ -56,6 +61,15 @@ The setup task:
 1. Clones a React TypeScript template for Inertia.js
 2. Sets up the frontend assets in your `assets` directory
 3. Installs all necessary frontend dependencies using Bun
+
+### What does `exinertia.setup.routes` do?
+
+The routes setup task:
+
+1. Adds `use Routes` to your Phoenix router
+2. Configures Routes in config/config.exs with your router module
+3. Sets up TypeScript definitions generation
+4. Optionally adds Routes.Watcher to your supervision tree for automatic route regeneration
 
 ## After Installation
 

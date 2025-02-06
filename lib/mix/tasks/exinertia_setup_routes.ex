@@ -164,9 +164,11 @@ if Code.ensure_loaded?(Igniter) do
     end
 
     defp add_live_reloading(igniter) do
+      application_module = Igniter.Project.Module.module_name(igniter, "Application")
+
       igniter
       |> Igniter.Project.Module.find_and_update_module!(
-        Application,
+        application_module,
         fn zipper ->
           with {:ok, zipper} <- Igniter.Code.Function.move_to_def(zipper, :start, 2),
                {:ok, zipper} <-

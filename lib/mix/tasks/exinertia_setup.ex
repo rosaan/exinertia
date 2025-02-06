@@ -13,13 +13,15 @@ defmodule Mix.Tasks.Exinertia.Setup do
   # Configuration attributes
   @template_repo "nordbeam/exinertia-templates/templates/react-ts"
   @assets_dir "assets"
-  @bun_path Path.expand("./_build/bun")
+  @bun_path "_build/bun"
 
   @impl true
   def run(_args) do
-    case clone_template() do
+    bun_path = Path.expand(@bun_path, File.cwd!())
+
+    case clone_template(bun_path) do
       :ok ->
-        case install_dependencies() do
+        case install_dependencies(bun_path) do
           :ok ->
             Mix.shell().info("""
             Successfully created frontend assets in #{@assets_dir}.
@@ -33,7 +35,7 @@ defmodule Mix.Tasks.Exinertia.Setup do
             #{msg}
 
             You may need to run manually:
-              cd #{@assets_dir} && #{@bun_path} i
+              cd #{@assets_dir} && #{bun_path} i
             """)
         end
 
@@ -43,13 +45,13 @@ defmodule Mix.Tasks.Exinertia.Setup do
         #{msg}
 
         You may need to run manually:
-          #{@bun_path} x degit #{@template_repo} #{@assets_dir}
+          #{bun_path} x degit #{@template_repo} #{@assets_dir}
         """)
     end
   end
 
-  defp clone_template do
-    case System.cmd(@bun_path, ["x", "degit", "--force", @template_repo, @assets_dir]) do
+  defp clone_template(bun_path) do
+    case System.cmd(bun_path, ["x", "degit", "--force", @template_repo, @assets_dir]) do
       {_output, 0} ->
         :ok
 
@@ -58,8 +60,8 @@ defmodule Mix.Tasks.Exinertia.Setup do
     end
   end
 
-  defp install_dependencies do
-    case System.cmd(@bun_path, ["i"], cd: @assets_dir) do
+  defp install_dependencies(bun_path) do
+    case System.cmd(bun_path, ["i"], cd: @assets_dir) do
       {_output, 0} ->
         :ok
 

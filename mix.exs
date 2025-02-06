@@ -31,7 +31,7 @@ defmodule Exinertia.MixProject do
 
   defp deps do
     [
-      {:igniter, "~> 0.5"},
+      {:igniter, "~> 0.5", only: [:dev, :test]},
       {:ex_doc, "~> 0.34.2", only: :dev, runtime: false}
     ]
   end

@@ -351,28 +351,16 @@ if Code.ensure_loaded?(Igniter) do
     end
 
     defp patch_layouts(igniter) do
-      igniter =
-        Igniter.Project.Module.find_and_update_module!(
-          igniter,
-          Igniter.Libs.Phoenix.web_module_name(igniter, "Layouts"),
-          fn zipper ->
-            {:ok,
-             Igniter.Code.Common.add_code(zipper, """
-               def dev_env? do
-               Mix.env() == :dev
-             end
-             """)}
-          end
-        )
-
       Igniter.Project.Module.find_and_update_module!(
         igniter,
-        web_module_name(igniter),
+        Igniter.Libs.Phoenix.web_module_name(igniter, "Layouts"),
         fn zipper ->
-          with {:ok, zipper} <- Igniter.Code.Function.move_to_def(zipper, :html, 0),
-               {:ok, zipper} <- Igniter.Code.Common.move_to_do_block(zipper) do
-            {:ok, Igniter.Code.Common.add_code(zipper, "import Inertia.HTML")}
-          end
+          {:ok,
+           Igniter.Code.Common.add_code(zipper, """
+             def dev_env? do
+              Mix.env() == :dev
+             end
+           """)}
         end
       )
     end

@@ -17,36 +17,27 @@ defmodule Mix.Tasks.Exinertia.Setup do
 
   @impl true
   def run(_args) do
-    bun_path = Path.expand(@bun_path, File.cwd!())
+    with {:ok, _} <- Mix.Task.run("bun.install"),
+         bun_path = Path.expand(@bun_path, File.cwd!()),
+         :ok <- clone_template(bun_path),
+         :ok <- install_dependencies(bun_path) do
+      Mix.shell().info("""
+      Successfully created frontend assets in #{@assets_dir}.
 
-    case clone_template(bun_path) do
-      :ok ->
-        case install_dependencies(bun_path) do
-          :ok ->
-            Mix.shell().info("""
-            Successfully created frontend assets in #{@assets_dir}.
-
-            As a last step, update your tailwind.config.js to add "./js/**/*.{js,ts,jsx,tsx}".
-            """)
-
-          {:error, msg} ->
-            Mix.shell().warning("""
-            Successfully set up frontend assets but failed to install dependencies:
-            #{msg}
-
-            You may need to run manually:
-              cd #{@assets_dir} && #{bun_path} i
-            """)
-        end
-
-      {:error, msg} ->
+      As a last step, update your tailwind.config.js to add "./js/**/*.{js,ts,jsx,tsx}".
+      """)
+    else
+      {:error, error} when error |> is_binary() ->
         Mix.shell().warning("""
         Failed to clone frontend template:
-        #{msg}
+        #{error}
 
         You may need to run manually:
-          #{bun_path} x degit #{@template_repo} #{@assets_dir}
+          #{@bun_path} x degit #{@template_repo} #{@assets_dir}
         """)
+
+      {:error, error} ->
+        Mix.shell().error("Failed to install bun: #{inspect(error)}")
     end
   end
 

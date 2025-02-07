@@ -64,7 +64,9 @@ if Code.ensure_loaded?(Igniter) do
         # You can restrict to :dev or :test if desired
         only: nil,
         positional: [],
-        composes: [],
+        composes: [
+          "exinertia.setup"
+        ],
         # We'll parse --force, --yes from the CLI
         schema: [
           force: :boolean,
@@ -95,7 +97,7 @@ if Code.ensure_loaded?(Igniter) do
       |> patch_root_layout()
       |> patch_layouts()
       |> patch_web_module()
-      |> clone_inertia_template()
+      |> Igniter.add_task("exinertia.setup")
       |> final_instructions()
     end
 
@@ -391,38 +393,9 @@ if Code.ensure_loaded?(Igniter) do
       )
     end
 
-    # 11. Clone the Inertia.js template and install dependencies
-    defp clone_inertia_template(igniter) do
-      bun_path = Path.expand("_build/bun", File.cwd!())
-      assets_dir = "assets"
-      template_repo = "nordbeam/exinertia-templates/templates/react-ts"
-
-      with {_output, 0} <-
-             System.cmd(bun_path, ["x", "degit", "--force", template_repo, assets_dir]),
-           {_output, 0} <- System.cmd(bun_path, ["i"], cd: assets_dir) do
-        igniter
-      else
-        {error_output, _} ->
-          Igniter.add_warning(
-            igniter,
-            "Failed to clone template or install dependencies: #{error_output}"
-          )
-      end
-    end
-
     # After applying most of our changes, run "mix deps.get" and then "mix bun.install"
     defp fetch_and_install_deps(igniter, yes) do
-      igniter = Igniter.apply_and_fetch_dependencies(igniter, yes: yes, yes_to_deps: true)
-
-      case Mix.Task.run("bun.install") do
-        {:error, error} ->
-          Igniter.add_warning(igniter, "Failed to install bun: #{inspect(error)}")
-
-        _ ->
-          :ok
-      end
-
-      igniter
+      Igniter.apply_and_fetch_dependencies(igniter, yes: yes, yes_to_deps: true)
     end
 
     # Finally, we can print instructions or reminders

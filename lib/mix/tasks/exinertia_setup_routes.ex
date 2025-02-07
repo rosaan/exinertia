@@ -110,18 +110,21 @@ if Code.ensure_loaded?(Igniter) do
     end
 
     @impl Igniter.Mix.Task
-    def igniter(igniter, _argv) do
+    def igniter(igniter, argv) do
+      yes = "--yes" in argv or "-y" in argv
+
       igniter
-      |> add_bun_and_inertia()
+      |> add_routes(yes)
       |> update_router()
       |> update_config()
       |> add_live_reloading()
       |> final_instructions()
     end
 
-    defp add_bun_and_inertia(igniter) do
+    defp add_routes(igniter, yes) do
       igniter
       |> Igniter.Project.Deps.add_dep({:routes, "~> 0.1.0"})
+      |> Igniter.apply_and_fetch_dependencies(yes: yes, yes_to_deps: true)
     end
 
     # 1. Update your Phoenix router file to include "use Routes"

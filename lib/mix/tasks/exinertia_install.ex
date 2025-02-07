@@ -29,6 +29,9 @@ defmodule Mix.Tasks.Exinertia.Install.Docs do
       8. Modify the existing root.html.heex to reference your new Vite manifest for main.js.
       9. Insert Inertia imports into lib/myapp_web.ex for your controllers/templates.
       10. Update mix aliases for building/deploying assets with bun.
+      11. Clone the Inertia.js template from nordbeam/exinertia-templates
+      12. Install frontend dependencies with bun
+      13. Configure Tailwind content paths for JavaScript files
 
     ## Example
 
@@ -74,10 +77,13 @@ if Code.ensure_loaded?(Igniter) do
     end
 
     @impl Igniter.Mix.Task
-    def igniter(igniter, _argv) do
+    def igniter(igniter, argv) do
+      yes = "--yes" in argv or "-y" in argv
+
       igniter
       |> remove_esbuild_and_tailwind()
       |> add_bun_and_inertia()
+      |> fetch_and_install_deps(yes)
       |> create_vite_manifest_file()
       |> update_config_for_bun()
       |> update_config_for_inertia()
@@ -89,6 +95,7 @@ if Code.ensure_loaded?(Igniter) do
       |> patch_root_layout()
       |> patch_layouts()
       |> patch_web_module()
+      |> clone_inertia_template()
       |> final_instructions()
     end
 
@@ -396,15 +403,39 @@ if Code.ensure_loaded?(Igniter) do
       )
     end
 
+    # 11. Clone the Inertia.js template and install dependencies
+    defp clone_inertia_template(igniter) do
+      bun_path = Path.expand("_build/bun", File.cwd!())
+      assets_dir = "assets"
+      template_repo = "nordbeam/exinertia-templates/templates/react-ts"
+
+      with {_output, 0} <-
+             System.cmd(bun_path, ["x", "degit", "--force", template_repo, assets_dir]),
+           {_output, 0} <- System.cmd(bun_path, ["i"], cd: assets_dir) do
+        igniter
+      else
+        {error_output, _} ->
+          Igniter.add_warning(
+            igniter,
+            "Failed to clone template or install dependencies: #{error_output}"
+          )
+      end
+    end
+
+    # After applying most of our changes, run "mix deps.get" and then "mix bun.install"
+    defp fetch_and_install_deps(igniter, yes) do
+      igniter
+      |> Igniter.apply_and_fetch_dependencies(yes: yes, yes_to_deps: true)
+    end
+
     # Finally, we can print instructions or reminders
     defp final_instructions(igniter) do
       Igniter.add_notice(igniter, """
       Exinertia installation complete.
 
       Next steps:
-      • Run "mix deps.get" to install new dependencies
-      • Run "mix bun.install" to install bun and dependencies
-      • Run "mix exinertia.setup" to scaffold your inertia project
+      • Update tailwind.config.js to include "./js/**/*.{js,ts,jsx,tsx}" in content paths
+      • Run "mix exinertia.setup.routes" to add the Routes library to the project (optional)
 
       Happy coding with Inertia and Phoenix!
       """)

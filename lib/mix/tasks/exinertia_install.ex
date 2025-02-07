@@ -98,7 +98,6 @@ if Code.ensure_loaded?(Igniter) do
       |> patch_layouts()
       |> patch_web_module()
       |> Igniter.add_task("exinertia.setup")
-      |> final_instructions()
     end
 
     # 1. Remove esbuild and tailwind from mix.exs, if they exist
@@ -396,19 +395,6 @@ if Code.ensure_loaded?(Igniter) do
     # After applying most of our changes, run "mix deps.get" and then "mix bun.install"
     defp fetch_and_install_deps(igniter, yes) do
       Igniter.apply_and_fetch_dependencies(igniter, yes: yes, yes_to_deps: true)
-    end
-
-    # Finally, we can print instructions or reminders
-    defp final_instructions(igniter) do
-      Igniter.add_notice(igniter, """
-      Exinertia installation complete.
-
-      Next steps:
-      • Update tailwind.config.js to include "./js/**/*.{js,ts,jsx,tsx}" in content paths
-      • Run "mix exinertia.setup.routes" to add the Routes library to the project (optional)
-
-      Happy coding with Inertia and Phoenix!
-      """)
     end
 
     #

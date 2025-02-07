@@ -9,7 +9,7 @@ Add ExInertia to your dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:exinertia, "~> 0.1.0"}
+    {:exinertia, "~> 0.5.0"}
   ]
 end
 ```

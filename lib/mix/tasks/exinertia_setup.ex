@@ -58,7 +58,8 @@ if Code.ensure_loaded?(Igniter) do
 
     @impl Igniter.Mix.Task
     def igniter(igniter, _argv) do
-      with bun_path <- Path.expand(@bun_path, File.cwd!()),
+      with :ok <- Mix.Task.run("bun.install"),
+           bun_path <- Path.expand(@bun_path, File.cwd!()),
            :ok <- clone_template(bun_path),
            :ok <- install_dependencies(bun_path) do
         Igniter.add_notice(igniter, """

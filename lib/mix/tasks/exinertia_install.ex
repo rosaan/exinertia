@@ -424,8 +424,17 @@ if Code.ensure_loaded?(Igniter) do
 
     # After applying most of our changes, run "mix deps.get" and then "mix bun.install"
     defp fetch_and_install_deps(igniter, yes) do
+      igniter = Igniter.apply_and_fetch_dependencies(igniter, yes: yes, yes_to_deps: true)
+
+      case Mix.Task.run("bun.install") do
+        {:error, error} ->
+          Igniter.add_warning(igniter, "Failed to install bun: #{inspect(error)}")
+
+        _ ->
+          :ok
+      end
+
       igniter
-      |> Igniter.apply_and_fetch_dependencies(yes: yes, yes_to_deps: true)
     end
 
     # Finally, we can print instructions or reminders

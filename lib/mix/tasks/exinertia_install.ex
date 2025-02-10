@@ -139,7 +139,7 @@ if Code.ensure_loaded?(Igniter) do
         {:code,
          Sourceror.parse_string!("""
          [
-           args: ~w(run dev),
+           args: ~w(x --bun vite),
            cd: Path.expand("../assets", __DIR__),
            env: %{}
          ]
@@ -165,7 +165,7 @@ if Code.ensure_loaded?(Igniter) do
         {:code,
          Sourceror.parse_string!("""
          [
-           args: ~w(run build),
+           args: ~w(x --bun vite build),
            cd: Path.expand("../assets", __DIR__),
            env: %{}
          ]

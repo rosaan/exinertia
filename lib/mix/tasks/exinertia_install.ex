@@ -148,6 +148,19 @@ if Code.ensure_loaded?(Igniter) do
       |> Igniter.Project.Config.configure(
         "config.exs",
         :bun,
+        [:install],
+        {:code,
+         Sourceror.parse_string!("""
+         [
+           args: ~w(i),
+           cd: Path.expand("../assets", __DIR__),
+           env: %{}
+         ]
+         """)}
+      )
+      |> Igniter.Project.Config.configure(
+        "config.exs",
+        :bun,
         [:build],
         {:code,
          Sourceror.parse_string!("""
@@ -242,16 +255,18 @@ if Code.ensure_loaded?(Igniter) do
     defp update_mix_aliases(igniter) do
       igniter
       |> Igniter.Project.TaskAliases.modify_existing_alias("assets.setup", fn zipper ->
-        {:ok, Sourceror.Zipper.replace(zipper, quote(do: ["bun.install"]))}
+        {:ok,
+         Sourceror.Zipper.replace(zipper, quote(do: ["bun.install --if-missing", "bun install"]))}
       end)
       |> Igniter.Project.TaskAliases.modify_existing_alias("assets.build", fn zipper ->
-        {:ok, Sourceror.Zipper.replace(zipper, quote(do: ["bun build", "bun css"]))}
+        {:ok,
+         Sourceror.Zipper.replace(zipper, quote(do: ["bun install", "bun build", "bun css"]))}
       end)
       |> Igniter.Project.TaskAliases.modify_existing_alias("assets.deploy", fn zipper ->
         {:ok,
          Sourceror.Zipper.replace(
            zipper,
-           quote(do: ["bun build --minify", "bun css --minify", "phx.digest"])
+           quote(do: ["bun install", "bun build --minify", "bun css --minify", "phx.digest"])
          )}
       end)
     end

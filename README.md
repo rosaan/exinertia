@@ -5,9 +5,11 @@ ExInertia is a toolkit for seamlessly integrating Inertia.js with Phoenix, using
 ## Installation
 
 
-ExInertia uses Igniter under the hood, so you can just run:
+ExInertia uses Igniter under the hood, so just run:
 
 ```bash
+# in your project directory
+mix archive.install hex igniter_new
 mix igniter.install exinertia
 ```
 

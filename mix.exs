@@ -4,7 +4,7 @@ defmodule Exinertia.MixProject do
   def project do
     [
       app: :exinertia,
-      version: "0.6.0",
+      version: "0.7.0",
       elixir: "~> 1.18",
       start_permanent: Mix.env() == :prod,
       elixirc_paths: elixirc_paths(Mix.env()),

@@ -4,20 +4,10 @@ ExInertia is a toolkit for seamlessly integrating Inertia.js with Phoenix, using
 
 ## Installation
 
-Add Igniter to your dependencies:
 
-```elixir
-def deps do
-  [
-    {:igniter, "~> 0.5", only: [:dev, :test]}
-  ]
-end
-```
-
-Then run:
+ExInertia uses Igniter under the hood, so you can just run:
 
 ```bash
-mix deps.get
 mix igniter.install exinertia
 ```
 

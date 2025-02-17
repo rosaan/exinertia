@@ -107,7 +107,7 @@ if Code.ensure_loaded?(Igniter) do
         "runtime.exs",
         Igniter.Project.Application.app_name(igniter),
         [:env],
-        {:code, Sourceror.parse_string!("config.env()")}
+        {:code, Sourceror.parse_string!("config_env()")}
       )
     end
 

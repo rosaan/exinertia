@@ -384,7 +384,7 @@ if Code.ensure_loaded?(Igniter) do
         fn zipper ->
           {:ok,
            Igniter.Code.Common.add_code(zipper, """
-             def dev_env?, do: Application.get_env(#{Igniter.Project.Application.app_name(igniter)}, :env) == :dev
+             def dev_env?, do: Application.get_env(:#{Igniter.Project.Application.app_name(igniter)}, :env) == :dev
            """)}
         end
       )

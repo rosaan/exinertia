@@ -83,6 +83,7 @@ if Code.ensure_loaded?(Igniter) do
       yes = "--yes" in argv or "-y" in argv
 
       igniter
+      |> add_env_for_app_config()
       |> remove_esbuild_and_tailwind()
       |> add_bun_and_inertia()
       |> fetch_and_install_deps(yes)
@@ -98,6 +99,16 @@ if Code.ensure_loaded?(Igniter) do
       |> patch_layouts()
       |> patch_web_module()
       |> Igniter.add_task("exinertia.setup")
+    end
+
+    defp add_env_for_app_config(igniter) do
+      igniter
+      |> Igniter.Project.Config.configure(
+        "runtime.exs",
+        Igniter.Project.Application.app_name(igniter),
+        [:env],
+        {:code, Sourceror.parse_string!("config.env()")}
+      )
     end
 
     # 1. Remove esbuild and tailwind from mix.exs, if they exist
@@ -373,9 +384,7 @@ if Code.ensure_loaded?(Igniter) do
         fn zipper ->
           {:ok,
            Igniter.Code.Common.add_code(zipper, """
-             def dev_env? do
-              Mix.env() == :dev
-             end
+             def dev_env?, do: Application.get_env(#{Igniter.Project.Application.app_name(igniter)}, :env) == :dev
            """)}
         end
       )

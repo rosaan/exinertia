@@ -55,7 +55,7 @@ if Code.ensure_loaded?(Igniter) do
         group: :exinertia,
         # Our primary new deps. Note that we remove esbuild/tailwind in code below.
         adds_deps: [
-          {:inertia, "~> 2.1.0"},
+          {:inertia, "~> 2.4.0"},
           {:bun, "~> 1.4"}
         ],
         # If we wanted to cascade-install from these deps, we would list them under `installs: []`.
@@ -120,7 +120,7 @@ if Code.ensure_loaded?(Igniter) do
 
     defp add_bun_and_inertia(igniter) do
       igniter
-      |> Igniter.Project.Deps.add_dep({:inertia, "~> 2.1.0"})
+      |> Igniter.Project.Deps.add_dep({:inertia, "~> 2.4.0"})
       |> Igniter.Project.Deps.add_dep({:bun, "~> 1.4"})
     end
 
